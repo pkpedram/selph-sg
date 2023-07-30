@@ -12,7 +12,11 @@ const sg = async (config = Object) => {
             case 'Boolean':
                 return 'boolean'
             case 'Date':
-                return 'string'        
+                return 'string'
+            case 'file':
+              return 'file'
+            case 'File':
+              return 'file'
             case moduleNames.find(itm =>itm == type):
                 return 'string'
             
@@ -42,7 +46,8 @@ const sg = async (config = Object) => {
       ],
       "basePath": "/api",
       "consumes": [
-        "application/json"
+        "application/json",
+        "multipart/form-data"
       ],
       "produces": [
         "application/json"
@@ -223,27 +228,28 @@ const sg = async (config = Object) => {
                         "operationId": "${mdl.name}_create",
                         "description": "",
                         "parameters": [
+                         
                           ${
-                            Object.keys(mdl.model).filter(itm => (mdl.model[itm] == "file" || mdl.model[itm] == "File" || mdl.model[itm].type == "file" || mdl.model[itm].type == "File")).
+                            Object.keys(mdl.model).filter(itm => (mdl.model[itm] == "file" || mdl.model[itm] == "File" || mdl.model[itm].type == "file" || mdl.model[itm].type == "File")).length !== 0 ?
+                            
+                            Object.keys(mdl.model).
                             map(item => `\n{
                               "name": "${item}",
                               "in": "formData",
-                              "type": "file"
+                              "type": "${declareValidType(mdl.model[item]?.type ? mdl.model[item]?.type : mdl.model[item])}"
                             }`)
+                            
+                            : `{
+                              "name": "data",
+                              "in": "body",
+                              "required": true,
+                              "schema": {
+                                "$ref": "#/definitions/${mdl.name}"
+                              }
+                            }`
 
                           }
-                          ${
-                            Object.keys(mdl.model).filter(itm => (mdl.model[itm] == "file" || mdl.model[itm] == "File" || mdl.model[itm].type == "file" || mdl.model[itm].type == "File")).length !== 0 ? ',' : ''
-
-                          }
-                          {
-                            "name": "data",
-                            "in": "body",
-                            "required": true,
-                            "schema": {
-                              "$ref": "#/definitions/${mdl.name}"
-                            }
-                          }
+                          
                         ],
                         "responses": {
                           "200": {
