@@ -17,7 +17,11 @@ let config = {
                 "name": "String",
                 "testId": {"type": "test"},
                 "testIasdd": 'test',
-                "birth_date": {"type": "Date", "unique": true, "default": "new Date()"}
+                "birth_date": {"type": "Date", "unique": true, "default": "new Date()"},
+                "file1": "file",
+                "file2": "File",
+                "file3": {type: "file"},
+                "file4": {type: "File"},
             }
         }
     ],
